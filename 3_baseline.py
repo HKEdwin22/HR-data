@@ -1,11 +1,10 @@
 # Import libraries
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.naive_bayes import CategoricalNB, GaussianNB
-from sklearn.metrics import accuracy_score, confusion_matrix
-import seaborn as sns
 
 
 def Training(m, x, y):
