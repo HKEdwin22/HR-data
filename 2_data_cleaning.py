@@ -7,7 +7,7 @@ import seaborn as sns
 from timeit import default_timer as timer
 
 
-def check_format(dataset, att, type):
+def Check_Format(dataset, att, type):
     '''
     Purpose: Check the data format
     dataset : input dataframe
@@ -129,7 +129,7 @@ if __name__ == '__main__':
             t = 'num'
         else:
             t = 'str'
-        check_format(df_raw, a, t)    
+        Check_Format(df_raw, a, t)    
     print('-------------Data Format Checked-------------')    
 
     # Encode the features
@@ -148,6 +148,9 @@ if __name__ == '__main__':
     #         print(f'False: row {row} : {i}')
     #     row += 1
     print('-------------Corrected Age and Service Year Computed-------------')
+
+    plt.bar(df_2.iloc[:, 2])
+    plt.show()
 
     # Data visualization
     print(df_raw.iloc[0])
