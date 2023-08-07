@@ -22,12 +22,14 @@ def Feature_Selection(x, y):
         score.append(scr)
         best_f.append(feature)
 
-    plt.figure(figsize=(12,9))
+    plt.figure(figsize=(16,12))
     plt.scatter(best_f, score)
 
     plt.title('MI of Features')
+    plt.xticks(rotation=25)
     plt.xlabel('Feature')
     plt.ylabel('Mutual Information Score')
+    plt.tight_layout(pad=5)
 
     plt.show()
 
@@ -74,5 +76,8 @@ y = df['EmploymentStatus']
 # Baseline Model
 Training('Gau', X_cont, y)
 Training('Cat', X_cat, y)
+
+# Feature Selection for CategoricalNB
+Feature_Selection(X_cat, y)
 
 pass
