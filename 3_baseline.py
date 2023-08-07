@@ -5,7 +5,31 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.naive_bayes import CategoricalNB, GaussianNB
+from sklearn.feature_selection import mutual_info_classif
 
+
+def Feature_Selection(x, y):
+    '''
+    Purpose: select features
+    x : input dataset (X_cat)
+    y : target
+    '''
+    best_f = []
+    score = []
+    MI = mutual_info_classif(x, y, random_state=0)
+    for scr, feature in sorted (zip(MI, x.columns), reverse=True):
+        print(feature, round(scr, 4))
+        score.append(scr)
+        best_f.append(feature)
+
+    plt.figure(figsize=(12,9))
+    plt.scatter(best_f, score)
+
+    plt.title('MI of Features')
+    plt.xlabel('Feature')
+    plt.ylabel('Mutual Information Score')
+
+    plt.show()
 
 def Training(m, x, y):
     '''
