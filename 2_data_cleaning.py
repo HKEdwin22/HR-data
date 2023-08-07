@@ -114,12 +114,11 @@ def Useful_Date(x, att):
 if __name__ == '__main__':
 
     # Load the data
-    df_raw = pd.read_csv('./dataset_1.csv', index_col=0)
+    df_raw = pd.read_csv('./dataset1_mined.csv', index_col=0)
     print('Shape of dataset: ', df_raw.shape)
 
     # Check empty cells by columns
-    for col in df_raw.columns:
-        pd.isna(df_raw[col]).value_counts()
+    dummy = df_raw.isnull().sum()
     print('-------------Confirmed No Empty Cell in the Data Set-------------')
 
     # Check data format
