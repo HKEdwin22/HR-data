@@ -7,6 +7,24 @@ import seaborn as sns
 from timeit import default_timer as timer
 
 
+def Combine_Cat(x, f):
+    '''
+    Purpose: combine categories in a categorical feature to avoid outliers
+    x : data set
+    f : feature
+    '''
+    print(f'------------------{f}------------------')
+    print(x[f].value_counts())
+    n = int(input('Input the number of categories to be kept: '))
+    if n != 0:
+        new_cat = input('Input the name of the new category: ')
+        l = x[f].value_counts().nlargest(n).index
+        x[f + '_Combined'] = x[f].where(x[f].isin(l), new_cat)
+        x.drop([f], axis=1)
+
+    return x
+
+
 def Check_Format(dataset, att, type):
     '''
     Purpose: Check the data format
@@ -132,8 +150,16 @@ if __name__ == '__main__':
         Check_Format(df_raw, a, t)    
     print('-------------Data Format Checked-------------')    
 
+    # Handle outliers in categorical data
+    for r, f in enumerate(df_raw.columns):
+        if f not in ['Salary', 'Age', 'ServiceYears']:
+            if r == 1:
+                df_combined = Combine_Cat(df_raw, f)
+            else:
+                df_combined = Combine_Cat(df_combined, f)
+        
     # Encode the features
-    df_encoded = Encode_Cat(df_raw)
+    df_encoded = Encode_Cat(df_combined)
     print('-------------Categorical Features Encoded-------------')
 
     # Handle age and years of service
@@ -156,6 +182,6 @@ if __name__ == '__main__':
     print(df_raw.iloc[0])
     Visualize_Data(df_2)
 
-    df_2.to_csv('dataset2_cleaned.csv')
+    df_2.to_csv('dataset2_cleaned_combined.csv')
     
     pass
