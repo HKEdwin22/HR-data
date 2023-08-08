@@ -157,6 +157,7 @@ if __name__ == '__main__':
                 df_combined = Combine_Cat(df_raw, f)
             else:
                 df_combined = Combine_Cat(df_combined, f)
+    print('-------------1st Outliers Treatment-------------')
         
     # Encode the features
     df_encoded = Encode_Cat(df_combined)
