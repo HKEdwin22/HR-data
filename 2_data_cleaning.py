@@ -20,7 +20,7 @@ def Combine_Cat(x, f):
         new_cat = input('Input the name of the new category: ')
         l = x[f].value_counts().nlargest(n).index
         x[f + '_Combined'] = x[f].where(x[f].isin(l), new_cat)
-        x.drop([f], axis=1)
+        x = x.drop([f], axis=1)
 
     return x
 
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
     # Handle outliers in categorical data
     for r, f in enumerate(df_raw.columns):
-        if f not in ['Salary', 'Age', 'ServiceYears']:
+        if f not in ['Salary', 'Age', 'ServiceYears', 'DOB', ]:
             if r == 1:
                 df_combined = Combine_Cat(df_raw, f)
             else:
