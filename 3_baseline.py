@@ -80,7 +80,7 @@ def Training(m, x, y):
 
 
 # Load the data
-df = pd.read_csv('./dataset2_cleaned.csv', index_col=0)
+df = pd.read_csv('./dataset2_cleaned_combined.csv', index_col=0)
 
 # Drop data that don't help
 df = df.drop(['Zip'], axis=1)

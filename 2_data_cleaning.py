@@ -10,7 +10,7 @@ from timeit import default_timer as timer
 def Combine_Cat(x, f):
     '''
     Purpose: combine categories in a categorical feature to avoid outliers
-    x : data set
+    x : input dataframe
     f : feature
     '''
     print(f'------------------{f}------------------')
