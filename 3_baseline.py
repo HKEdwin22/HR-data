@@ -8,6 +8,23 @@ from sklearn.naive_bayes import CategoricalNB, GaussianNB
 from sklearn.feature_selection import mutual_info_classif
 
 
+def Outlier(x, f, t):
+    '''
+    Purpose: identify the outliers
+    x : data set
+    f : feature of the data set
+    t : Cat or Cont
+    '''
+    if t == 'Cat':
+        plt.pie(x[f].value_counts(), autopct='%1.2f%%')
+        plt.title(f'Frequency of {f}')
+    else:
+        plt.boxplot(x[f])
+        plt.title(f'Distribution of {f}')
+    plt.get_current_fig_manager().full_screen_toggle()
+    plt.savefig(f'{f}.png')
+    plt.clf()
+
 def Feature_Selection(x, y):
     '''
     Purpose: select features
@@ -66,12 +83,18 @@ def Training(m, x, y):
 df = pd.read_csv('./dataset2_cleaned.csv', index_col=0)
 
 # Drop data that don't help
-df = df.drop(['Zip'], axis=1)
+# df = df.drop(['Zip'], axis=1)
 
 # Split the data into categorical and continuous
 X_cont = df[['Salary', 'Age', 'ServiceYears']]
 X_cat = df.drop(['Salary', 'Age', 'ServiceYears', 'EmploymentStatus'], axis=1)
 y = df['EmploymentStatus']
+
+# Check outliers
+# for i in X_cat.columns:
+#     Outlier(X_cat, i, 'Cat')
+for i in X_cont.columns:
+    Outlier(X_cont, i, 'Cont')
 
 # Baseline Model
 Training('Gau', X_cont, y)
