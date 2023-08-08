@@ -83,22 +83,22 @@ def Training(m, x, y):
 df = pd.read_csv('./dataset2_cleaned.csv', index_col=0)
 
 # Drop data that don't help
-# df = df.drop(['Zip'], axis=1)
+df = df.drop(['Zip'], axis=1)
 
 # Split the data into categorical and continuous
 X_cont = df[['Salary', 'Age', 'ServiceYears']]
 X_cat = df.drop(['Salary', 'Age', 'ServiceYears', 'EmploymentStatus'], axis=1)
 y = df['EmploymentStatus']
 
-# Check outliers
-# for i in X_cat.columns:
-#     Outlier(X_cat, i, 'Cat')
-for i in X_cont.columns:
-    Outlier(X_cont, i, 'Cont')
-
 # Baseline Model
 Training('Gau', X_cont, y)
 Training('Cat', X_cat, y)
+
+# Check outliers
+# for i in X_cat.columns:
+#     Outlier(X_cat, i, 'Cat')
+# for i in X_cont.columns:
+#     Outlier(X_cont, i, 'Cont')
 
 # Feature Selection for CategoricalNB
 Feature_Selection(X_cat, y)
