@@ -173,10 +173,7 @@ if __name__ == '__main__':
     #     if i > 65 or i < 0:
     #         print(f'False: row {row} : {i}')
     #     row += 1
-    print('-------------Corrected Age and Service Year Computed-------------')
-
-    plt.bar(df_2.iloc[:, 2])
-    plt.show()
+    print('-------------Corrected Age and Service Year Computed-------------') 
 
     # Data visualization
     print(df_raw.iloc[0])
