@@ -15,12 +15,21 @@ def Combine_Cat(x, f):
     '''
     print(f'------------------{f}------------------')
     print(x[f].value_counts())
-    n = int(input('Input the number of categories to be kept: '))
-    if n != 0:
+    choice = input('Modify or not (Y/N): ')
+    
+    if choice == 'Y':
+        choice = input('Combine by items (Y/N): ')
         new_cat = input('Input the name of the new category: ')
-        l = x[f].value_counts().nlargest(n).index
+        if choice == 'Y':
+            l = input('Enter categories to be kept (separate by comma): ')
+            l = l.split(' ')
+        else:
+            n = int(input('Input the number of categories to be kept: '))
+            if n != 0:
+                
+                l = x[f].value_counts().nlargest(n).index
         x[f + '_Combined'] = x[f].where(x[f].isin(l), new_cat)
-        x = x.drop([f], axis=1)
+        # x = x.drop([f], axis=1)
 
     return x
 
