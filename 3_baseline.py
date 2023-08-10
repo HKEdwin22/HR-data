@@ -6,6 +6,29 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.naive_bayes import CategoricalNB, GaussianNB
 from sklearn.feature_selection import mutual_info_classif, SelectKBest, chi2
+from scipy.stats import chi2_contingency
+
+
+def Chi2_Independency(y, x, t=0.05):
+    '''
+    Purpose: Chi-sqaured test of independence
+    Null hypothesis : the categories of the independent variables have the same effects on the dependent variable
+    y : target variable
+    x : feature
+    t : threshold of p-value (default: 0.05)
+    '''
+
+    contingency_table = pd.crosstab(df[y], X_cat[x], margins=False)
+    stat, p, dof, expected = chi2_contingency(contingency_table)
+
+    # interpret p-value
+    prob = 0.95
+    alpha = 1.0 - prob
+    print(f'-------------------{x}-------------------')
+    if p <= alpha:
+        print(f'p-value is {p:.4f}. Dependent (reject H0)')
+    else:
+        print(f'p-value is {p:.4f}. Independent (fail to reject H0)')
 
 
 def Outlier(x, f, t):
@@ -125,10 +148,17 @@ for i in range(len(fs.scores_)):
 print(dict(sorted(sel_f.items(), key=lambda item: item[1], reverse=True)))
 
 
-# ['Position', 'ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
+# 0.7619 = ['ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
+# 0.7460: ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
+# note: sel_X = ['Position', 'ManagerName', 'RecruitmentSource', 'State_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'MaritalDesc']
+# After Chi2 Independency Test: State, Absences and RaceDesc_Combined fail to reject H0
+sel_X = ['ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
 X_fs = X_cat[sel_X]
 Training('Cat', X_fs, y)
 
-pass
+# Chi2 Test of Independence
+for i in X_cat.columns:
+    Chi2_Independency('EmploymentStatus', i, t=0.01)
 
-sel_X = ['Position', 'ManagerName', 'RecruitmentSource', 'State_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'MaritalDesc']
+
+pass
