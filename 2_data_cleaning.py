@@ -106,7 +106,7 @@ def Visualize_Data(x):
     x : input dataframe
     '''
     start = timer()
-    sns.pairplot(x, vars=['SpecialProjectsCount', 'Absences', 'EmpSatisfaction'], hue='EmploymentStatus')
+    sns.pairplot(x, vars=['Sex', 'RaceDesc', 'EmpSatisfaction', 'PerformanceScore', 'State'], hue='EmploymentStatus')
     print(f'Plotting time: {round(timer() - start, 2)}s')
     plt.show()
 
@@ -169,7 +169,7 @@ if __name__ == '__main__':
     print('-------------1st Outliers Treatment-------------')
         
     # Encode the features
-    df_encoded = Encode_Cat(df_combined)
+    df_encoded = Encode_Cat(df_raw)
     print('-------------Categorical Features Encoded-------------')
 
     # Handle age and years of service
@@ -178,11 +178,11 @@ if __name__ == '__main__':
     del(df_encoded)
     
     # Check if the age is valid
-    # row = 0
-    # for i in df_2['Age']:
-    #     if i > 65 or i < 0:
-    #         print(f'False: row {row} : {i}')
-    #     row += 1
+    row = 0
+    for i in df_2['Age']:
+        if i > 65 or i < 0:
+            print(f'False: row {row} : {i}')
+        row += 1
     print('-------------Corrected Age and Service Year Computed-------------') 
 
     # Data visualization
