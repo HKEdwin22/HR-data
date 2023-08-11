@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.naive_bayes import CategoricalNB, GaussianNB
 from sklearn.feature_selection import mutual_info_classif, SelectKBest, chi2
+from sklearn.ensemble import RandomForestClassifier
 from scipy.stats import chi2_contingency
 
 
@@ -135,30 +136,16 @@ y = df['EmploymentStatus']
 # for i in X_cont.columns:
 #     Outlier(X_cont, i, 'Cont')
 
-# Feature Selection for CategoricalNB
-fs = Feature_Selection(X_cat, y, 'chi2')
-features = X_cat.columns[fs.get_support(indices=True)].tolist()
-threshold = 1
-sel_f = {}
-sel_X = []
-for i in range(len(fs.scores_)):
-    if fs.scores_[i] > threshold:
-        sel_f[features[i]] = fs.scores_[i]
-        sel_X.append(features[i])
-print(dict(sorted(sel_f.items(), key=lambda item: item[1], reverse=True)))
-
-# 0.7778 = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'State']
-# 0.7619 = ['ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
-# 0.7460: ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined']
-# note: sel_X = ['Position', 'ManagerName', 'RecruitmentSource', 'State_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'MaritalDesc']
-# After Chi2 Independency Test: State, Absences and RaceDesc_Combined fail to reject H0
-sel_X = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'State']
-X_fs = X_cat[sel_X]
-Training('Cat', X_fs, y)
-
-# Chi2 Test of Independence
-# for i in X_cat.columns:
-#     Chi2_Independency('EmploymentStatus', i, t=0.01)
+# Feature Selection with Random Forest
+rf = RandomForestClassifier(n_estimators=100)
+rf.fit(X_cat, y)
+idx = rf.feature_importances_.argsort()
+plt.figure(figsize=(16,9))
+plt.barh(X_cat.columns[idx], rf.feature_importances_[idx])
+plt.xlabel('Feature Importance')
+plt.title('Feature Selection with Random Forests')
+plt.tight_layout(pad=1)
+plt.show()
 
 
 pass
