@@ -106,7 +106,7 @@ def Training(m, x, y):
     acc_val = accuracy_score(y_val, p)
     cm = confusion_matrix(y_val, p)
 
-    fig = plt.figure(figsize=(12,9))
+    plt.figure(figsize=(12,9))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
     plt.title('Baseline Predication / (%.4f/%.4f)' %(acc_tr, acc_val))
     plt.ylabel('Actual Class')
@@ -137,9 +137,10 @@ y = df['EmploymentStatus']
 #     Outlier(X_cont, i, 'Cont')
 
 # Feature Selection with Random Forest
-rf = RandomForestClassifier(n_estimators=100)
+rf = RandomForestClassifier(n_estimators=100, random_state=41)
 rf.fit(X_cat, y)
 idx = rf.feature_importances_.argsort()
+
 plt.figure(figsize=(16,9))
 plt.barh(X_cat.columns[idx], rf.feature_importances_[idx])
 plt.xlabel('Feature Importance')
