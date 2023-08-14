@@ -90,6 +90,7 @@ def Feature_Selection(x, y, m):
             print(f'Feature {i}     {best_f[i]}: {score[i]}')
         plt.xticks(rotation=80)
 
+    score, best_f = zip(*sorted(zip(score, best_f), reverse=True))
     plt.scatter(best_f, score)
     plt.title(f'Feature Selection ({m})')
     plt.xlabel('Feature')
@@ -130,7 +131,7 @@ def Training(m, x, y):
 
 
 # Load the data
-df = pd.read_csv('./dataset2_cleaned_combined_dropOriginal.csv', index_col=0)
+df = pd.read_csv('./dataset2_cleaned_combined.csv', index_col=0)
 
 # Drop data that don't help
 df = df.drop(['Zip'], axis=1)
@@ -161,10 +162,9 @@ print(dict(sorted(sel_f.items(), key=lambda item: item[1], reverse=True)))
 # 0.7778 = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'State']
 # 0.7619 = ['ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
 # 0.7460: ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined']
-# BerNB 0.7460= ['SpecialProjectsCount_Combined']
 # note: sel_X = ['Position', 'ManagerName', 'RecruitmentSource', 'State_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'MaritalDesc']
 # After Chi2 Independency Test: State, Absences and RaceDesc_Combined fail to reject H0
-sel_X = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'Position']
+sel_X = ['MaritalDesc', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'Position']
 X_fs = X_cat[sel_X]
 Training('Cat', X_fs, y)
 

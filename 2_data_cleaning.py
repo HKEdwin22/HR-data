@@ -110,7 +110,12 @@ def Visualize_Data(x):
     print(f'Plotting time: {round(timer() - start, 2)}s')
     plt.show()
 
-def Useful_Date(x, att):
+def Useful_Date(x, att='DOB'):
+    '''
+    Purpose : Transform date into useful information
+    x : dataframe
+    att : DOB or DOH
+    '''
     duration = []
     if att == 'DOB':
         format = '%d/%m/%y'
