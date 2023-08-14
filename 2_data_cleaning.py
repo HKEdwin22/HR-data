@@ -29,7 +29,7 @@ def Combine_Cat(x, f):
                 
                 l = x[f].value_counts().nlargest(n).index
         x[f + '_Combined'] = x[f].where(x[f].isin(l), new_cat)
-        # x = x.drop([f], axis=1)
+        x = x.drop([f], axis=1)
 
     return x
 
@@ -189,6 +189,6 @@ if __name__ == '__main__':
     print(df_raw.iloc[0])
     Visualize_Data(df_2)
 
-    df_2.to_csv('dataset2_cleaned_combined.csv')
+    df_2.to_csv('dataset2_cleaned_combined_dropOri.csv')
     
     pass

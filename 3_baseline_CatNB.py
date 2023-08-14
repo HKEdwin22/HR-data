@@ -2,28 +2,41 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.naive_bayes import CategoricalNB, GaussianNB
 from sklearn.feature_selection import mutual_info_classif, SelectKBest, chi2
-from sklearn.ensemble import RandomForestClassifier
 from scipy.stats import chi2_contingency
 
 
-def Chi2_Independency(y, x, t=0.05):
+def Cross_Val(classifier, x, y, cv=5):
+    '''
+    Purpose : conduct cross validation
+    classifier : Gau or Cat
+    x : dataframe
+    y : target class
+    cv : number of folds
+    '''
+    if classifier == 'Gau':
+        clf = GaussianNB()
+    else:
+        clf = CategoricalNB(min_categories=x.nunique())
+
+    return cross_validate(clf, x, y, cv=cv, n_jobs=4, return_train_score=True)
+
+def Chi2_Independency(y, x, prob=0.95):
     '''
     Purpose: Chi-sqaured test of independence
     Null hypothesis : the categories of the independent variables have the same effects on the dependent variable
     y : target variable
     x : feature
-    t : threshold of p-value (default: 0.05)
+    prob : statistical significance threshold (default: 0.95)
     '''
 
     contingency_table = pd.crosstab(df[y], X_cat[x], margins=False)
     stat, p, dof, expected = chi2_contingency(contingency_table)
 
     # interpret p-value
-    prob = 0.95
     alpha = 1.0 - prob
     print(f'-------------------{x}-------------------')
     if p <= alpha:
@@ -31,6 +44,7 @@ def Chi2_Independency(y, x, t=0.05):
     else:
         print(f'p-value is {p:.4f}. Independent (fail to reject H0)')
 
+    return stat, p, dof, expected
 
 def Outlier(x, f, t):
     '''
@@ -116,37 +130,55 @@ def Training(m, x, y):
 
 
 # Load the data
-df = pd.read_csv('./dataset2_cleaned_combined.csv', index_col=0)
+df = pd.read_csv('./dataset2_cleaned_combined_dropOriginal.csv', index_col=0)
 
 # Drop data that don't help
 df = df.drop(['Zip'], axis=1)
 
 # Split the data into categorical and continuous
-X_cont = df[['Salary', 'Age', 'ServiceYears']]
 X_cat = df.drop(['Salary', 'Age', 'ServiceYears', 'EmploymentStatus'], axis=1)
 y = df['EmploymentStatus']
 
 # Baseline Model
-# Training('Gau', X_cont, y)
 # Training('Cat', X_cat, y)
 
 # Check outliers
 # for i in X_cat.columns:
 #     Outlier(X_cat, i, 'Cat')
-# for i in X_cont.columns:
-#     Outlier(X_cont, i, 'Cont')
 
-# Feature Selection with Random Forest
-rf = RandomForestClassifier(n_estimators=100, random_state=41)
-rf.fit(X_cat, y)
-idx = rf.feature_importances_.argsort()
+# Feature Selection for CategoricalNB
+fs = Feature_Selection(X_cat, y, 'chi2')
+features = X_cat.columns[fs.get_support(indices=True)].tolist()
+threshold = 1
+sel_f = {}
+sel_X = []
+for i in range(len(fs.scores_)):
+    if fs.scores_[i] > threshold:
+        sel_f[features[i]] = fs.scores_[i]
+        sel_X.append(features[i])
+print(dict(sorted(sel_f.items(), key=lambda item: item[1], reverse=True)))
 
-plt.figure(figsize=(16,9))
-plt.barh(X_cat.columns[idx], rf.feature_importances_[idx])
-plt.xlabel('Feature Importance')
-plt.title('Feature Selection with Random Forests')
-plt.tight_layout(pad=1)
-plt.show()
+# 0.7778 = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'State']
+# 0.7619 = ['ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
+# 0.7460: ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined']
+# BerNB 0.7460= ['SpecialProjectsCount_Combined']
+# note: sel_X = ['Position', 'ManagerName', 'RecruitmentSource', 'State_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'MaritalDesc']
+# After Chi2 Independency Test: State, Absences and RaceDesc_Combined fail to reject H0
+sel_X = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'Position']
+X_fs = X_cat[sel_X]
+Training('Cat', X_fs, y)
 
+# Chi2 Test of Independence
+stat, p, dof, expected = [], [], [], []
+for i in X_cat.columns:
+    a, b, c, d = Chi2_Independency('EmploymentStatus', i, prob=0.995)
+    stat.append(a)
+    p.append(b)
+    dof.append(c)
+    expected.append(d)
+
+chi2 = pd.DataFrame([features, stat, p, dof, expected]).transpose()
+chi2.columns = ['Feature', 'Stat', 'p-value', 'DOF', 'Expected Value']
+chi2.to_csv('Chi2_results.csv', index=False)
 
 pass
