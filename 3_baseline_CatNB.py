@@ -141,11 +141,11 @@ X_cat = df.drop(['Salary', 'Age', 'ServiceYears', 'EmploymentStatus'], axis=1)
 y = df['EmploymentStatus']
 
 # Baseline Model
-# Training('Cat', X_cat, y)
+Training('Cat', X_cat, y)
 
 # Check outliers
-# for i in X_cat.columns:
-#     Outlier(X_cat, i, 'Cat')
+for i in X_cat.columns:
+    Outlier(X_cat, i, 'Cat')
 
 # Feature Selection for CategoricalNB
 fs = Feature_Selection(X_cat, y, 'chi2')
@@ -159,11 +159,6 @@ for i in range(len(fs.scores_)):
         sel_X.append(features[i])
 print(dict(sorted(sel_f.items(), key=lambda item: item[1], reverse=True)))
 
-# 0.7778 = ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'State']
-# 0.7619 = ['ManagerName', 'RecruitmentSource_Combined', 'State', 'Absences', 'SpecialProjectsCount_Combined', 'RaceDesc_Combined']
-# 0.7460: ['ManagerName', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined']
-# note: sel_X = ['Position', 'ManagerName', 'RecruitmentSource', 'State_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'MaritalDesc']
-# After Chi2 Independency Test: State, Absences and RaceDesc_Combined fail to reject H0
 sel_X = ['MaritalDesc', 'RecruitmentSource_Combined', 'Absences', 'SpecialProjectsCount_Combined', 'Position']
 X_fs = X_cat[sel_X]
 Training('Cat', X_fs, y)

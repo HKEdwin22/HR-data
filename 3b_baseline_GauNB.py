@@ -112,6 +112,6 @@ X_cont = pd.DataFrame(New_X).transpose()
 X_cont.columns = ['Salary', 'Age']
 
 # Train the model
-# Training('Gau', X_cont, y)
+Training('Gau', X_cont, y)
 
 pass
